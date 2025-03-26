@@ -7,7 +7,12 @@ services:
     restart: always
     image: talebook/talebook
     volumes:
-      - /tmp/demo:/data
+      - D:/testProgram/talebook_volume/data:/data
+      - D:/testProgram/talebook/webserver:/var/www/talebook/webserver
+      # favicon.ico，logo图等目录
+      - D:/testProgram/talebook_volume/web:/var/www/talebook/app/dist
+      # vue build编译代码
+      - D:/testProgram/talebook_volume/app:/var/www/talebook/app
     ports:
       - "8080:80"
       - "8443:443"
