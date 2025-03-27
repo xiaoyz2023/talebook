@@ -54,6 +54,7 @@ export default {
             rating: "全部评分",
             author: "全部作者",
             publisher: "全部出版社",
+            purchase: "全部已购书",
         }
         var meta = this.$route.path.split("/")[1];
         if ( titles[meta] !== undefined ) {

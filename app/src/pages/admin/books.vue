@@ -95,7 +95,29 @@
                 </v-edit-dialog>
             </template>
 
+            <template>
+                isbn
+            </template>
+
+            <!-- <template v-slot:item.isbn="{ item }">
+                {{ item.isbn }}
+                 <v-edit-dialog
+                    large
+                    :return-value.sync="item.isbn"
+                    @save="save(item, 'publisher')"
+                    save-text="保存"
+                    cancel-text="取消"
+                >
+                    {{ item.isbn }}
+                    <template v-slot:input>
+                        <div class="mt-4 text-h6">修改字段</div>
+                        <v-text-field v-model="item.publisher" label="ISBN" counter></v-text-field>
+                    </template>
+                </v-edit-dialog> 
+            </template> -->
+
             <template v-slot:item.publisher="{ item }">
+                {{ item.title }} 
                 <v-edit-dialog
                     large
                     :return-value.sync="item.publisher"
@@ -235,6 +257,7 @@ export default {
             { text: "书名", sortable: true, value: "title" },
             { text: "作者", sortable: true, value: "author", width: "100px" },
             { text: "评分", sortable: false, value: "rating", width: "60px" },
+            { text: "ISBN", sortable: false, value: "isbn" },
             { text: "出版社", sortable: false, value: "publisher" },
             { text: "标签", sortable: true, value: "tags", width: "100px" },
             { text: "简介", sortable: true, value: "comments" },

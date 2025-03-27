@@ -81,8 +81,8 @@ class MetaBooks(ListHandler):
 
 def routes():
     return [
-        (r"/api/(author|publisher|tag|rating|series)", MetaList),
-        (r"/api/(author|publisher|tag|rating|series)/(.*)", MetaBooks),
+        (r"/api/(author|publisher|tag|rating|series|purchase)", MetaList),
+        (r"/api/(author|publisher|tag|rating|series|purchase)/(.*)", MetaBooks),
         (r"/api/author/(.*)/update", AuthorBooksUpdate),
         (r"/api/publisher/(.*)/update", PubBooksUpdate),
     ]

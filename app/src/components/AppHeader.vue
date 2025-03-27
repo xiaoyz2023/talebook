@@ -249,6 +249,7 @@ export default {
                 { icon: "mdi-home-group", href: "/publisher", text: "出版社", count: this.sys.publishers },
                 { icon: "mdi-human-greeting", href: "/author", text: "作者", count: this.sys.authors },
                 { icon: "mdi-tag-heart", href: "/tag", text: "标签", count: this.sys.tags },
+                { icon: "mdi-tag-heart", href: "/purchase", text: "已购", count: this.sys.purchase },
                 {
                     target: "",
                     links: [
@@ -256,6 +257,7 @@ export default {
                         { icon: "mdi-star-half", href: "/rating", text: "评分" },
                         { icon: "mdi-trending-up", href: "/hot", text: "热度榜单" },
                         { icon: "mdi-history", href: "/recent", text: "所有书籍" },
+                        { icon: "mdi-history", href: "/purchase", text: "所有已购" },
                     ],
                 },
             ];

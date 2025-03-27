@@ -396,6 +396,8 @@ class BaseHandler(web.RequestHandler):
         self.write(self.render_string(template, **vals))
 
     def get_book(self, book_id):
+        # 详情页
+        logging.debug("7878999_1")
         books = self.get_books(ids=[int(book_id)])
         if not books:
             self.write({"err": "not_found", "msg": _(u"抱歉，这本书不存在")})
@@ -416,6 +418,12 @@ class BaseHandler(web.RequestHandler):
     def get_books(self, *args, **kwargs):
         _ts = time.time()
         books = self.db.get_data_as_dict(*args, **kwargs)
+
+        logging.debug("7878999_self.db: ", self.db)
+
+        # 图书管理，详情页，已经是包含全部字段的
+        logging.debug("7878999_books_list: ", books)
+
         logging.debug(
             "[%5d ms] select books from library  (count = %d)" % (int(1000 * (time.time() - _ts)), len(books))
         )
@@ -433,9 +441,13 @@ class BaseHandler(web.RequestHandler):
             maps[b.book_id] = d
         for book in books:
             book.update(maps.get(book["id"], empty_item))
+            # book["title"] = book["title"] + '6767'
         logging.debug(
             "[%5d ms] select books from database (count = %d)" % (int(1000 * (time.time() - _ts)), len(books))
         )
+        
+        # logging.debug("books list 3434:", books)
+
         return books
 
     def count_increase(self, book_id, **kwargs):
@@ -463,10 +475,15 @@ class BaseHandler(web.RequestHandler):
         sql = """SELECT tags.name, count(distinct book) as count
         FROM tags left join books_tags_link on tags.id = books_tags_link.tag
         group by tags.id"""
+
+        # 分类导航
+        logging.debug("7878999_all_tags_with_count: ", sql)
+
         tags = dict((i[0], i[1]) for i in self.cache.backend.conn.get(sql))
         return tags
 
     def get_category_with_count(self, field):
+        logging.debug("7878999_get_category_with_count field: ",field)
         table = field if field in ["series"] else field + "s"
         name_column = "A.rating as name" if field in ["rating"] else "A.name"
         args = {"table": table, "field": field, "name_column": name_column}
@@ -476,13 +493,17 @@ class BaseHandler(web.RequestHandler):
             on A.id = B.%(field)s group by A.id"""
             % args
         )
-        logging.debug(sql)
+
+        # 出版社、作者、标签
+        logging.debug("7878999_get_category_with_count: ",sql)
+        
         rows = self.cache.backend.conn.get(sql)
         items = [{"id": a, "name": b, "count": c} for a, b, c in rows]
         return items
 
     def books_by_id(self):
         sql = "SELECT id FROM books order by id desc"
+        logging.debug("7878999_books_by_id: ", sql)
         ids = [v[0] for v in self.cache.backend.conn.get(sql)]
         return ids
 
@@ -499,6 +520,7 @@ class ListHandler(BaseHandler):
     def get_item_books(self, category, name):
         books = []
         item_id = self.cache.get_item_id(category, name)
+        logging.debug("7878999_2")
         if item_id:
             ids = self.db.get_books_for_category(category, item_id)
             books = self.db.get_data_as_dict(ids=ids)
@@ -530,6 +552,8 @@ class ListHandler(BaseHandler):
         except:
             size = 60
         delta = min(max(size, 60), 100)
+
+        logging.debug("7878999_3")
 
         if ids:
             ids = list(ids)
