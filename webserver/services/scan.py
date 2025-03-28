@@ -123,6 +123,7 @@ class ScanService(AsyncService):
             row.title = mi.title
             row.author = mi.author_sort
             row.publisher = mi.publisher
+            row.purchase = mi.purchase
             row.tags = ", ".join(mi.tags)
             row.status = ScanFile.READY  # 设置为可处理
 

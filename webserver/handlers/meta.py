@@ -8,9 +8,13 @@ from gettext import gettext as _
 from webserver import utils
 from webserver.handlers.base import ListHandler, js
 
+import logging
+
 
 class AuthorBooksUpdate(ListHandler):
     def post(self, name):
+        logging.debug("db操作 - AuthorBooksUpdate() - name:: ")
+        logging.debug(name)
         category = "authors"
         author_id = self.cache.get_item_id(category, name)
         ids = self.db.get_books_for_category(category, author_id)
@@ -21,6 +25,8 @@ class AuthorBooksUpdate(ListHandler):
 
 class PubBooksUpdate(ListHandler):
     def post(self, name):
+        logging.debug("db操作 - PubBooksUpdate() - name:: ")
+        logging.debug(name)
         category = "publisher"
         publisher_id = self.cache.get_item_id(category, name)
         if publisher_id:
@@ -46,6 +52,7 @@ class MetaList(ListHandler):
             "series": _(u"丛书列表"),
             "rating": _(u"全部评分"),
             "publisher": _(u"全部出版社"),
+            "purchase": _(u"全部已购"),
         }
         title = titles.get(meta, _(u"未知")) % vars()
         # category = meta if meta in ["series", "publisher"] else meta + "s"
@@ -69,6 +76,7 @@ class MetaBooks(ListHandler):
             "series": _('"%(name)s"丛书包含的书籍'),
             "rating": _("评分为%(name)s星的书籍"),
             "publisher": _(u'"%(name)s"出版的书籍'),
+            "purchase": _(u'"%(name)s"的书籍'),
         }
         title = titles.get(meta, _(u"未知")) % vars()  # noqa: F841
         category = meta + "s" if meta in ["tag", "author"] else meta

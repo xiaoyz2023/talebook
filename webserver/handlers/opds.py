@@ -27,6 +27,8 @@ from tornado import web
 from webserver import loader
 from webserver.handlers.base import BaseHandler
 
+import logging
+
 CONF = loader.get_settings()
 
 
@@ -452,6 +454,12 @@ class OpdsHandler(BaseHandler):
         max_items = CONF["opds_max_items"]
         offsets = Offsets(offset, max_items, len(items))
         items = items[offsets.offset : offsets.offset + max_items]
+        logging.debug("db操作 - get_opds_acquisition_feed() - ids, offset, page_url, up_url, id_:: ")
+        logging.debug(ids,
+        offset,
+        page_url,
+        up_url,
+        id_)
         updated = self.db.last_modified()
         self.set_header("Last-Modified", self.last_modified(updated))
         self.set_header("Content-Type", "application/atom+xml; profile=opds-catalog; charset=UTF-8")
@@ -536,6 +544,9 @@ class OpdsHandler(BaseHandler):
         items = [x for x in items if belongs(x, which)]
         if not items:
             raise web.HTTPError(404, reason="No items in group %r:%r" % (category, which))
+        
+        logging.debug("db操作 - opds_category_group() - category:: ")
+        logging.debug(category)
         updated = self.db.last_modified()
 
         id_ = "calibre-category-group-feed:" + category + ":" + which
@@ -584,6 +595,9 @@ class OpdsHandler(BaseHandler):
         categories = self.db.get_categories()
         if which not in categories:
             raise web.HTTPError(404, reason="Category %r not found" % which)
+
+        logging.debug("db操作 - opds_navcatalog() - which, page_url, up_url:: ")
+        logging.debug(which, page_url, up_url)
 
         items = categories[which]
         updated = self.db.last_modified()
@@ -720,6 +734,9 @@ class OpdsHandler(BaseHandler):
                 continue
             name = _(meta["name"])
             cats.append((name, name, "N" + category))
+
+        logging.debug("db操作 - getter() - x:: ")
+        logging.debug(x)
 
         updated = self.db.last_modified()
         self.set_header("Last-Modified", self.last_modified(updated))

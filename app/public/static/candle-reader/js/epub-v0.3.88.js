@@ -17245,6 +17245,7 @@ class packaging_Packaging {
     metadata.description = this.getElementText(xml, "description");
     metadata.pubdate = this.getElementText(xml, "date");
     metadata.publisher = this.getElementText(xml, "publisher");
+    metadata.purchase = this.getElementText(xml, "purchase");
     metadata.identifier = this.getElementText(xml, "identifier");
     metadata.language = this.getElementText(xml, "language");
     metadata.rights = this.getElementText(xml, "rights");

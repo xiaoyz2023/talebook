@@ -159,6 +159,9 @@ class BookRefer(BaseHandler):
     def get(self, id):
         book_id = int(id)
         mi = self.db.get_metadata(book_id, index_is_id=True)
+        logging.debug("db操作 - get() - book_id, mi:: ")
+        logging.debug("book_id:: " + book_id)
+        logging.debug(mi)
         books = self.plugin_search_books(mi)
         keys = [
             "cover_url",
@@ -168,6 +171,7 @@ class BookRefer(BaseHandler):
             "author_sort",
             "publisher",
             "isbn",
+            "purchase",
             "comments",
             "provider_key",
             "provider_value",
@@ -179,6 +183,8 @@ class BookRefer(BaseHandler):
             d["pubyear"] = pubdate.strftime("%Y") if pubdate else ""
             if not d["comments"]:
                 d["comments"] = _(u"无详细介绍")
+            if not d["purchase"]:
+                d["purchase"] = _(u"未购买")
             rsp.append(d)
         return {"err": "ok", "books": rsp}
 
@@ -252,6 +258,7 @@ class BookEdit(BaseHandler):
         KEYS = [
             "authors",
             "title",
+            "purchase",
             "comments",
             "tags",
             "publisher",
@@ -269,6 +276,9 @@ class BookEdit(BaseHandler):
             if content is None:
                 return {"err": "params.pudate.invalid", "msg": _(u"出版日期参数错误，格式应为 2019-05-10或2019-05或2019年或2019")}
             mi.set("pubdate", content)
+
+        logging.debug("db操作 - BookEdit() - bid, mi:: ")
+        logging.debug(bid, mi)
 
         if "tags" in data and not data["tags"]:
             self.db.set_tags(bid, [])
