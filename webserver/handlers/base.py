@@ -482,7 +482,7 @@ class BaseHandler(web.RequestHandler):
                 item = {
                     "id": book[0], 
                     "title": book[1], 
-                    "value": book[2], 
+                    "price": book[2], 
                     "isbn": book[3],
                     "rating": "",
                     "timestamp": "",

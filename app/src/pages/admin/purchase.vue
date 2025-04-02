@@ -180,19 +180,19 @@
                 </v-edit-dialog>
             </template>
 
-            <template v-slot:item.purchase="{ item }">
-                {{ item.purchase }}
+            <template v-slot:item.price="{ item }">
+                {{ item.price }}
                  <v-edit-dialog
                     large
-                    :return-value.sync="item.purchase"
-                    @save="save(item, 'purchase')"
+                    :return-value.sync="item.price"
+                    @save="save(item, 'price')"
                     save-text="保存"
                     cancel-text="取消"
                 >
-                    {{ item.purchase }}
+                    {{ item.price }}
                     <template v-slot:input>
                         <div class="mt-4 text-h6">修改字段</div>
-                        <v-text-field v-model="item.purchase" label="purchase" counter></v-text-field>
+                        <v-text-field v-model="item.price" label="price" counter></v-text-field>
                     </template>
                 </v-edit-dialog> 
             </template>
@@ -280,7 +280,7 @@ export default {
             { text: "出版社", sortable: false, value: "publisher" },
             { text: "标签", sortable: true, value: "tags", width: "100px" },
             { text: "简介", sortable: true, value: "comments" },
-            { text: "价格", sortable: true, value: "purchase" },
+            { text: "价格", sortable: true, value: "price" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

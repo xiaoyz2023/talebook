@@ -34,6 +34,9 @@ class SimpleBookFormatter:
         b["ts"] = ""
         if b["timestamp"]:
             b["ts"] = b["timestamp"].strftime("%s")
+        price = 0
+        if b["price"] and b["price"] > 0:
+            price = b["price"]
             
         return {
             "id": b["id"],
@@ -57,6 +60,7 @@ class SimpleBookFormatter:
             "collector": self.get_collector(),
             "count_visit": self.val("count_visit", 0),
             "count_download": self.val("count_download", 0),
+            "price": price,
         }
 
 
