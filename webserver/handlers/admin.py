@@ -540,6 +540,38 @@ class AdminBookFill(BaseHandler):
         AutoFillService().auto_fill_all(idlist)
         return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
+class AdminPurchaseFill(BaseHandler):
+    @js
+    @is_admin
+    def get(self):
+        s = AutoFillService()
+        status = {
+            "total": s.count_total,
+            "skip": s.count_skip,
+            "done": s.count_done,
+            "fail": s.count_fail,
+        }
+        return {"err": "ok", "msg": "ok", "status": status}
+
+    @js
+    @is_admin
+    def post(self):
+        req = tornado.escape.json_decode(self.request.body)
+        idlist = req["idlist"]
+        if not idlist:
+            return {"err": "params.error", "msg": _(u"参数错误")}
+
+        if idlist == "all":
+            idlist = list(self.cache.search(""))
+        elif isinstance(idlist, list):
+            for bid in idlist:
+                if not isinstance(bid, int):
+                    return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
+        else:
+            return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
+
+        AutoFillService().auto_fill_all(idlist)
+        return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
 def routes():
     return [
@@ -550,5 +582,6 @@ def routes():
         (r"/api/admin/testmail", AdminTestMail),
         (r"/api/admin/book/list", AdminBookList),
         (r"/api/admin/book/fill", AdminBookFill),
-         (r"/api/admin/purchase", AdminPurchaseList),
+        (r"/api/admin/purchase/list", AdminPurchaseList),
+        (r"/api/admin/purchase/fill", AdminPurchaseFill),
     ]

@@ -253,7 +253,7 @@
 </template>
 
 <script>
-console.log("pages/admin/books.vue")
+console.log("pages/admin/purchase.vue")
 
 export default {
     data: () => ({
@@ -326,7 +326,7 @@ export default {
             if (this.search != undefined) {
                 data.append("search", this.search);
             }
-            this.$backend("/admin/book/list?" + data.toString())
+            this.$backend("/admin/purchase/list?" + data.toString())
                 .then((rsp) => {
                     if (rsp.err != "ok") {
                         this.items = [];
@@ -342,7 +342,7 @@ export default {
                 });
         },
         refresh_progress() {
-            this.$backend("/admin/book/fill", {
+            this.$backend("/admin/purchase/fill", {
                 method: "GET",
             })
             .then((rsp) => {
@@ -354,7 +354,7 @@ export default {
             this.refresh_progress();
         },
         auto_fill() {
-            this.$backend("/admin/book/fill", {
+            this.$backend("/admin/purchase/fill", {
                 method: "POST",
                 body: JSON.stringify({"idlist": "all"}),
             })
