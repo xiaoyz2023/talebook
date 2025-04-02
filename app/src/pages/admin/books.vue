@@ -95,26 +95,26 @@
                 </v-edit-dialog>
             </template>
 
-            <template>
+            <!-- <template>
                 isbn
-            </template>
+            </template> -->
 
-            <!-- <template v-slot:item.isbn="{ item }">
+            <template v-slot:item.isbn="{ item }">
                 {{ item.isbn }}
                  <v-edit-dialog
                     large
                     :return-value.sync="item.isbn"
-                    @save="save(item, 'publisher')"
+                    @save="save(item, 'isbn')"
                     save-text="保存"
                     cancel-text="取消"
                 >
                     {{ item.isbn }}
                     <template v-slot:input>
                         <div class="mt-4 text-h6">修改字段</div>
-                        <v-text-field v-model="item.publisher" label="ISBN" counter></v-text-field>
+                        <v-text-field v-model="item.isbn" label="ISBN" counter></v-text-field>
                     </template>
                 </v-edit-dialog> 
-            </template> -->
+            </template>
 
             <template v-slot:item.publisher="{ item }">
                 {{ item.title }} 
@@ -178,6 +178,23 @@
                         <v-textarea v-model="item.comments" label="简介"></v-textarea>
                     </template>
                 </v-edit-dialog>
+            </template>
+
+            <template v-slot:item.purchase="{ item }">
+                {{ item.purchase }}
+                 <v-edit-dialog
+                    large
+                    :return-value.sync="item.purchase"
+                    @save="save(item, 'purchase')"
+                    save-text="保存"
+                    cancel-text="取消"
+                >
+                    {{ item.purchase }}
+                    <template v-slot:input>
+                        <div class="mt-4 text-h6">修改字段</div>
+                        <v-text-field v-model="item.purchase" label="purchase" counter></v-text-field>
+                    </template>
+                </v-edit-dialog> 
             </template>
 
             <template v-slot:item.actions="{ item }">
@@ -261,6 +278,7 @@ export default {
             { text: "出版社", sortable: false, value: "publisher" },
             { text: "标签", sortable: true, value: "tags", width: "100px" },
             { text: "简介", sortable: true, value: "comments" },
+            { text: "价格", sortable: true, value: "purchase" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

@@ -455,6 +455,60 @@ class BaseHandler(web.RequestHandler):
 
         return books
 
+    def get_purchase_list(self, *args, **kwargs):
+
+        sql = """SELECT id FROM custom_columns WHERE label = 'purchase'"""
+        rows = self.cache.backend.conn.get(sql)
+
+        logging.debug("db操作 - get_purchase_list() - sql:: ")
+        logging.debug(sql)
+        logging.debug(rows)
+
+        books = []
+        if rows:
+            col_id = rows[0][0]
+            table_name = f"custom_column_{col_id}"
+
+            sql2 = f"""SELECT A.book, B.title, A.value, B.isbn FROM {table_name} as A LEFT JOIN books as B ON B.id = A.book WHERE CAST(value AS REAL) > 0 group by A.book"""
+
+            logging.debug("db操作 - get_purchase_list() - sql2: ")
+            logging.debug(sql2)
+            tuple_list = self.cache.backend.conn.get(sql2)
+            # [(50, 10.8, '书名', ''), (51, 5.0, '书名', '')]
+
+            # 获取列名,将结果转为字典列表
+            
+            for book in tuple_list:
+                item = {
+                    "id": book[0], 
+                    "title": book[1], 
+                    "value": book[2], 
+                    "isbn": book[3],
+                    "rating": "",
+                    "timestamp": "",
+                    "pubdate": "",
+                    "author": "",
+                    "authors": "",
+                    "author_sort": "",
+                    "tag": "",
+                    "tags": "",
+                    "publisher": "",
+                    "comments": "",
+                    "series": "",
+                    "language": "",
+                    "isbn": "",
+                    "img": "",
+                    "thumb": "",
+                    "collector": "",
+                    "count_visit": "",
+                    "count_download": "",
+                }
+                books.append(item)
+
+            logging.debug(books)
+
+        return books
+
     def count_increase(self, book_id, **kwargs):
         try:
             item = self.session.query(Item).filter(Item.book_id == book_id).one()
@@ -516,6 +570,25 @@ class BaseHandler(web.RequestHandler):
         ids = [v[0] for v in self.cache.backend.conn.get(sql)]
         return ids
 
+    def books_purchase_list(self):
+        sql = """SELECT id FROM custom_columns WHERE label = 'purchase'"""
+        rows = self.cache.backend.conn.get(sql)
+
+        logging.debug("db操作 - books_purchase_list() - sql:: ")
+        logging.debug(sql)
+        logging.debug(rows)
+
+        if rows:
+            col_id = rows[0][0]
+            table_name = f"custom_column_{col_id}"
+
+            sql2 = f"""SELECT id FROM {table_name} WHERE CAST(value AS REAL) > 0"""
+
+            logging.debug("db操作 - books_purchase_list() - sql2: ")
+            logging.debug(sql2)
+            ids = [v[0] for v in self.cache.backend.conn.get(sql2)]
+            return ids
+
     def get_argument_start(self):
         start = self.get_argument("start", 0)
         try:
@@ -527,10 +600,11 @@ class BaseHandler(web.RequestHandler):
 
 class ListHandler(BaseHandler):
     def get_item_books(self, category, name):
+        logging.debug("base.py: db操作 - get_item_books() - category, name:: ")
+        logging.debug(category)
+        logging.debug(name)
         books = []
         item_id = self.cache.get_item_id(category, name)
-        logging.debug("db操作 - get_item_books() - category, name:: ")
-        logging.debug(category, name)
         if item_id:
             ids = self.db.get_books_for_category(category, item_id)
             books = self.db.get_data_as_dict(ids=ids)

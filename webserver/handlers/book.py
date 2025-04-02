@@ -171,7 +171,6 @@ class BookRefer(BaseHandler):
             "author_sort",
             "publisher",
             "isbn",
-            "purchase",
             "comments",
             "provider_key",
             "provider_value",
@@ -183,8 +182,6 @@ class BookRefer(BaseHandler):
             d["pubyear"] = pubdate.strftime("%Y") if pubdate else ""
             if not d["comments"]:
                 d["comments"] = _(u"无详细介绍")
-            if not d["purchase"]:
-                d["purchase"] = _(u"未购买")
             rsp.append(d)
         return {"err": "ok", "books": rsp}
 
@@ -258,7 +255,6 @@ class BookEdit(BaseHandler):
         KEYS = [
             "authors",
             "title",
-            "purchase",
             "comments",
             "tags",
             "publisher",
@@ -266,6 +262,7 @@ class BookEdit(BaseHandler):
             "series",
             "rating",
             "language",
+            "price",
         ]
         for key, val in data.items():
             if key in KEYS:
@@ -278,7 +275,8 @@ class BookEdit(BaseHandler):
             mi.set("pubdate", content)
 
         logging.debug("db操作 - BookEdit() - bid, mi:: ")
-        logging.debug(bid, mi)
+        logging.debug(bid)
+        logging.debug(mi)
 
         if "tags" in data and not data["tags"]:
             self.db.set_tags(bid, [])
@@ -394,6 +392,12 @@ class RecentBook(ListHandler):
         ids = self.books_by_id()
         return self.render_book_list([], ids=ids, title=title, sort_by_id=True)
 
+
+class purchaseList(ListHandler):
+    def get(self):
+        title = _(u"已购书籍")
+        ids = self.books_purchase_list()
+        return self.render_book_list([], ids=ids, title=title, sort_by_id=True)
 
 class SearchBook(ListHandler):
     def get(self):
@@ -679,4 +683,5 @@ def routes():
         (r"/read/([0-9]+)", BookRead),
         (r"/api/read/txt", TxtRead),
         (r"/api/book/txt/init", BookTxtInit),
+        (r"/api/purchaseList", purchaseList),
     ]

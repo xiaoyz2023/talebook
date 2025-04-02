@@ -31,7 +31,10 @@ class SimpleBookFormatter:
 
     def format(self):
         b = self.book
-        b["ts"] = b["timestamp"].strftime("%s")
+        b["ts"] = ""
+        if b["timestamp"]:
+            b["ts"] = b["timestamp"].strftime("%s")
+            
         return {
             "id": b["id"],
             "title": b["title"],

@@ -464,7 +464,7 @@ class AdminBookList(BaseHandler):
         end = start + num
         all_ids = list(self.cache.search(search))
         total = len(all_ids)
-
+        
         # sort by id
         if sort == "id":
             all_ids.sort(reverse=desc)
@@ -476,6 +476,36 @@ class AdminBookList(BaseHandler):
 
         return {"err": "ok", "items": books, "total": total}
 
+class AdminPurchaseList(BaseHandler):
+    @js
+    @is_admin
+    def get(self):
+        if not self.admin_user:
+            return {"err": "permission.not_admin", "msg": _(u"当前用户非管理员")}
+
+        num = max(10, int(self.get_argument("num", 20)))
+        page = max(0, int(self.get_argument("page", 1)) - 1)
+        sort = self.get_argument("sort", "id")
+        desc = self.get_argument("desc", "desc") == "true"
+        search = self.get_argument("search", "")
+
+        logging.debug("num=%d, page=%d, sort=%s, desc=%s" % (num, page, sort, desc))
+
+        self.db.sort(field=sort, ascending=(not desc))
+        start = page * num
+        end = start + num
+        all_ids = list(self.cache.search(search))
+        total = len(all_ids)
+        
+        # sort by id
+        if sort == "id":
+            all_ids.sort(reverse=desc)
+
+        books = []
+        page_ids = all_ids[start:end]
+        if page_ids:
+            books = [SimpleBookFormatter(b, self.cdn_url).format() for b in self.get_purchase_list(ids=page_ids)]
+        return {"err": "ok", "items": books, "total": total}
 
 class AdminBookFill(BaseHandler):
     @js
@@ -520,4 +550,5 @@ def routes():
         (r"/api/admin/testmail", AdminTestMail),
         (r"/api/admin/book/list", AdminBookList),
         (r"/api/admin/book/fill", AdminBookFill),
+         (r"/api/admin/purchase", AdminPurchaseList),
     ]

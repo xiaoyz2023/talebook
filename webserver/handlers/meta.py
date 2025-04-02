@@ -43,6 +43,7 @@ class PubBooksUpdate(ListHandler):
 class MetaList(ListHandler):
     @js
     def get(self, meta):
+        logging.debug("MetaList:: " + meta)
         SHOW_NUMBER = 300
         if self.get_argument("show", "") == "all":
             SHOW_NUMBER = sys.maxsize
@@ -52,7 +53,7 @@ class MetaList(ListHandler):
             "series": _(u"丛书列表"),
             "rating": _(u"全部评分"),
             "publisher": _(u"全部出版社"),
-            "purchase": _(u"全部已购"),
+            "purchaseList": _(u"全部已购"),
         }
         title = titles.get(meta, _(u"未知")) % vars()
         # category = meta if meta in ["series", "publisher"] else meta + "s"
@@ -70,13 +71,13 @@ class MetaList(ListHandler):
 
 class MetaBooks(ListHandler):
     def get(self, meta, name):
+        logging.debug("MetaBooks:: " + meta + " - " + name)
         titles = {
             "tag": _(u'含有"%(name)s"标签的书籍'),
             "author": _(u'"%(name)s"编著的书籍'),
             "series": _('"%(name)s"丛书包含的书籍'),
             "rating": _("评分为%(name)s星的书籍"),
             "publisher": _(u'"%(name)s"出版的书籍'),
-            "purchase": _(u'"%(name)s"的书籍'),
         }
         title = titles.get(meta, _(u"未知")) % vars()  # noqa: F841
         category = meta + "s" if meta in ["tag", "author"] else meta
@@ -89,8 +90,8 @@ class MetaBooks(ListHandler):
 
 def routes():
     return [
-        (r"/api/(author|publisher|tag|rating|series|purchase)", MetaList),
-        (r"/api/(author|publisher|tag|rating|series|purchase)/(.*)", MetaBooks),
+        (r"/api/(author|publisher|tag|rating|series)", MetaList),
+        (r"/api/(author|publisher|tag|rating|series)/(.*)", MetaBooks),
         (r"/api/author/(.*)/update", AuthorBooksUpdate),
         (r"/api/publisher/(.*)/update", PubBooksUpdate),
     ]

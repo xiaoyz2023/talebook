@@ -76,6 +76,7 @@ export default {
             { icon: 'mdi-tag-heart',      href:'/tag',       text: '标签',     count: this.$store.state.sys.tags       },
             { icon: 'mdi-history',        href:'/recent',    text: '所有书籍', },
             { icon: 'mdi-trending-up',    href:'/hot',       text: '热度榜单', },
+            { icon: "mdi-tag-heart",      href: "/purchaseList", text: "已购书籍"},
             ]
     },
     async asyncData({ app, res }) {
