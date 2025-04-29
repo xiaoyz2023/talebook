@@ -14,7 +14,7 @@ services:
       # vue build编译代码
       - D:/testProgram/talebook_volume/app:/var/www/talebook/app
     ports:
-      - "8080:80"
+      - "8088:80"
       - "8443:443"
     environment:
       - PUID=1000

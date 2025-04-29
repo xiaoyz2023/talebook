@@ -64,6 +64,9 @@
                                 <v-col class='py-0' cols=12 sm=6>
                                     <v-text-field label="购买价格" v-model="book.price">{{ book.price }}</v-text-field>
                                 </v-col>
+                                <v-col class='py-0' cols=12 sm=6>
+                                    <v-text-field label="阅读状态" v-model="book.readStatus">{{ book.readStatus }}</v-text-field>
+                                </v-col>
 
                                 <v-col class='py-0' cols=12>
                                     <!-- TAGS -->

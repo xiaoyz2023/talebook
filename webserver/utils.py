@@ -4,7 +4,7 @@
 
 import datetime
 from gettext import gettext as _
-
+import logging
 
 class SimpleBookFormatter:
     """格式化calibre book的字段"""
@@ -34,9 +34,16 @@ class SimpleBookFormatter:
         b["ts"] = ""
         if b["timestamp"]:
             b["ts"] = b["timestamp"].strftime("%s")
+        # 价格
         price = 0
-        if b["price"] and b["price"] > 0:
+        if b.get("price") is not None:
+          if b["price"] > 0:
             price = b["price"]
+
+        # 阅读状态
+        readStatus = "未读"
+        if b.get("readStatus") is not None:
+            readStatus = b["readStatus"]
             
         return {
             "id": b["id"],
@@ -61,6 +68,7 @@ class SimpleBookFormatter:
             "count_visit": self.val("count_visit", 0),
             "count_download": self.val("count_download", 0),
             "price": price,
+            "readStatus": readStatus,
         }
 
 

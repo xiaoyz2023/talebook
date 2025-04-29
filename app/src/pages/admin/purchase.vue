@@ -100,7 +100,6 @@
             </template> -->
 
             <template v-slot:item.isbn="{ item }">
-                {{ item.isbn }}
                  <v-edit-dialog
                     large
                     :return-value.sync="item.isbn"
@@ -181,7 +180,6 @@
             </template>
 
             <template v-slot:item.price="{ item }">
-                {{ item.price }}
                  <v-edit-dialog
                     large
                     :return-value.sync="item.price"
@@ -281,6 +279,7 @@ export default {
             { text: "标签", sortable: true, value: "tags", width: "100px" },
             { text: "简介", sortable: true, value: "comments" },
             { text: "价格", sortable: true, value: "price" },
+            { text: "阅读状态", sortable: true, value: "readStatus" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

@@ -251,7 +251,21 @@ class BookEdit(BaseHandler):
             return {"err": "permission", "msg": _(u"无权操作")}
 
         data = tornado.escape.json_decode(self.request.body)
+
+        logging.debug("网页输入数据:: ")
+        logging.debug(data)
+
         mi = self.db.get_metadata(bid, index_is_id=True)
+        logging.debug("原始mi::")
+        logging.debug(mi)
+
+        # 查出purchase所在的自定义表名
+        # sql = """SELECT id FROM custom_columns WHERE label = 'purchase'"""
+        # rows = self.cache.backend.conn.get(sql)
+        # if rows:
+        #     col_id = str(rows[0][0])
+        #     # table_name = f"custom_column_{col_id}"
+
         KEYS = [
             "authors",
             "title",
@@ -263,10 +277,17 @@ class BookEdit(BaseHandler):
             "rating",
             "language",
             "price",
+            "readStatus",
         ]
         for key, val in data.items():
             if key in KEYS:
-                mi.set(key, val)
+                if key == "price":
+                  mi.set("#purchase", float(val)) 
+                  #purchase字段对应"购买状态"，需要映射转换
+                elif key == "readStatus":
+                  mi.set("#readStatus", val) # #readStatus字段对应"阅读状态"，需要映射转换
+                else:
+                  mi.set(key, val)
 
         if data.get("pubdate", None):
             content = douban.str2date(data["pubdate"])
@@ -274,12 +295,15 @@ class BookEdit(BaseHandler):
                 return {"err": "params.pudate.invalid", "msg": _(u"出版日期参数错误，格式应为 2019-05-10或2019-05或2019年或2019")}
             mi.set("pubdate", content)
 
-        logging.debug("db操作 - BookEdit() - bid, mi:: ")
+        logging.debug("db操作 - BookEdit() - bid:: ")
         logging.debug(bid)
+        logging.debug("mi::")
         logging.debug(mi)
 
         if "tags" in data and not data["tags"]:
             self.db.set_tags(bid, [])
+
+        logging.debug("更新成功")
 
         self.db.set_metadata(bid, mi)
         return {"err": "ok", "msg": _(u"更新成功")}
