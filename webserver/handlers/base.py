@@ -466,14 +466,25 @@ class BaseHandler(web.RequestHandler):
 
         sql_readStatus = """SELECT id FROM custom_columns WHERE label = 'readStatus'"""
         rows_readStatus = self.cache.backend.conn.get(sql_readStatus)
-
+        
         books = []
         if rows_purchase:
             col_id_purchase = rows_purchase[0][0]
             table_name_purchase = f"custom_column_{col_id_purchase}"
+
+            col_id_readStatus = rows_readStatus[0][0]
+            table_name_readStatus = f"custom_column_{col_id_readStatus}"
+
             tuple_list = []
 
-            sql = f"""SELECT A.book, B.title, A.value, A.purchase_date, B.isbn FROM {table_name_purchase} as A LEFT JOIN books as B ON B.id = A.book WHERE CAST(A.value AS REAL) > 0 group by A.book"""
+            sql = f"""
+            SELECT A.book, B.title, A.value, A.purchase_date, B.isbn, C.value AS read_status 
+            FROM {table_name_purchase} as A 
+            LEFT JOIN books as B ON B.id = A.book 
+            LEFT JOIN {table_name_readStatus} AS C ON C.book = A.book
+            WHERE CAST(A.value AS REAL) > 0 
+            group by A.book
+            """
 
             logging.debug("db操作 - get_purchase_list() - sql: ")
             logging.debug(sql)
@@ -492,6 +503,7 @@ class BaseHandler(web.RequestHandler):
                     "price": book[2], 
                     "purchase_date": book[3],
                     "isbn": book[4],
+                    "readStatus": book[5],
                     "rating": "",
                     "timestamp": "",
                     "pubdate": "",
