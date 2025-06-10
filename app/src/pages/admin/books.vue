@@ -100,7 +100,6 @@
             </template> -->
 
             <template v-slot:item.isbn="{ item }">
-                {{ item.isbn }}
                  <v-edit-dialog
                     large
                     :return-value.sync="item.isbn"
@@ -117,7 +116,6 @@
             </template>
 
             <template v-slot:item.publisher="{ item }">
-                {{ item.title }} 
                 <v-edit-dialog
                     large
                     :return-value.sync="item.publisher"

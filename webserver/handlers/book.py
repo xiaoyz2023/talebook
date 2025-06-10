@@ -308,6 +308,61 @@ class BookEdit(BaseHandler):
         self.db.set_metadata(bid, mi)
         return {"err": "ok", "msg": _(u"更新成功")}
 
+class BookAdd(BaseHandler):
+    @js
+    @auth
+    def post(self):
+        if not self.current_user.can_edit() and not self.is_admin():
+            return {"err": "permission", "msg": _(u"无权操作")}
+
+        data = tornado.escape.json_decode(self.request.body)
+
+        logging.debug("网页输入数据:: ")
+        logging.debug(data)
+
+        if not data.get("title", "").strip():
+            return {"err": "params.title.invalid", "msg": _(u"请输入书名")}
+
+        if not data.get("isbn", "").strip():
+            return {"err": "params.isbn.invalid", "msg": _(u"请输入isbn号")}
+
+        # 创建新的书籍元数据
+        from calibre.ebooks.metadata.book.base import Metadata
+        mi = Metadata(data["title"])
+        mi.authors = data.get("authors", [])
+        mi.publisher = data.get("publisher", "")
+        mi.isbn = data["isbn"]
+        mi.comments = data.get("comments", "")
+        mi.tags = data.get("tags", [])
+        mi.series = data.get("series", "")
+        mi.rating = data.get("rating", 0)
+        mi.language = data.get("language", "")
+        
+        # 处理自定义字段
+        if "price" in data:
+            mi.set("#purchase", float(data["price"]))
+        if "readStatus" in data:
+            mi.set("#readStatus", data["readStatus"])
+        
+        # 处理出版日期
+        if data.get("pubdate"):
+            content = douban.str2date(data["pubdate"])
+            if content is None:
+                return {"err": "params.pudate.invalid", "msg": _(u"出版日期参数错误，格式应为 2019-05-10或2019-05或2019年或2019")}
+            mi.pubdate = content
+
+        # 插入数据库
+        book_id = self.db.create_book_entry(mi, [])
+        if not book_id:
+            return {"err": "db.failed", "msg": _(u"数据库插入失败")}
+
+        # 添加收藏关系
+        item = Item()
+        item.book_id = book_id
+        item.collector_id = self.user_id()
+        item.save()
+
+        return {"err": "ok", "msg": _(u"添加成功")}
 
 class BookDelete(BaseHandler):
     @js
@@ -701,6 +756,7 @@ def routes():
         (r"/api/book/([0-9]+)", BookDetail),
         (r"/api/book/([0-9]+)/delete", BookDelete),
         (r"/api/book/([0-9]+)/edit", BookEdit),
+        (r"/api/book/add", BookAdd),
         (r"/api/book/([0-9]+\..+)", BookDownload),
         (r"/api/book/([0-9]+)/push", BookPush),
         (r"/api/book/([0-9]+)/refer", BookRefer),
