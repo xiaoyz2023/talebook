@@ -191,6 +191,7 @@ export default {
                 .then(rsp => {
                     if (rsp.err === 'ok') {
                         this.$alert("success", "保存成功！");
+                        this.init(); // 调用init方法重置表单数据
                         this.$router.push("/book/add");
                     } else {
                         this.$alert("error", rsp.msg);

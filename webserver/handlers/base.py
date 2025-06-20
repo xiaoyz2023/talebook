@@ -421,6 +421,19 @@ class BaseHandler(web.RequestHandler):
         _ts = time.time()
         books = self.db.get_data_as_dict(*args, **kwargs)
 
+        # 获取价格自定义字段
+        sql_purchase = """SELECT id FROM custom_columns WHERE label = 'purchase'"""
+        rows_purchase = self.cache.backend.conn.get(sql_purchase)
+        if rows_purchase:
+            col_id = rows_purchase[0][0]
+            table_name = f"custom_column_{col_id}"
+            price_map = {row[0]: row[1] for row in self.cache.backend.conn.get(
+                f"SELECT book, value FROM {table_name}"
+            )}
+
+        # logging.debug("db操作 - get_books() - price_map:: ")
+        # logging.debug(price_map)
+
         # logging.debug("db操作 - get_books() - self.db:: ")
         # logging.debug(self.db)
 
@@ -447,11 +460,17 @@ class BaseHandler(web.RequestHandler):
         for book in books:
             book.update(maps.get(book["id"], empty_item))
             # book["title"] = book["title"] + '6767'
+            # 添加价格信息
+            if rows_purchase:
+                book["price"] = price_map.get(book["id"])
+            else:
+                book["price"] = ""
+
         logging.debug(
             "[%5d ms] select books from database (count = %d)" % (int(1000 * (time.time() - _ts)), len(books))
         )
         
-        # logging.debug("books list 3434:", books)
+        logging.debug("books list 3434:", books)
 
         return books
 
