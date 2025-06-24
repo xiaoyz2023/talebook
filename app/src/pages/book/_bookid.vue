@@ -235,6 +235,10 @@
                                     <v-icon>explore</v-icon>
                                     ISBN：{{ book.isbn }}
                                 </v-chip>
+                                <v-chip rounded small dark color="grey" v-if="book.price">
+                                    <v-icon>money</v-icon>
+                                    价格：{{ book.price }}
+                                </v-chip>
                                 <template v-for="tag in book.tags">
                                     <v-chip
                                         rounded
