@@ -14,7 +14,7 @@ from gettext import gettext as _
 from webserver.plugins.meta.douban import str2date
 from .baidubaike.baidubaike import Page
 
-BAIKE_ISBN = "0000000000001"
+BAIKE_ISBN = "000000000001"
 KEY = "BaiduBaike"
 
 CHROME_HEADERS = {
@@ -47,14 +47,16 @@ class BaiduBaikeApi:
         from calibre.utils.date import utcnow, strptime
 
         info = baike.get_info()
-        logging.debug("\n" + "\n".join("%s:\t%s" % v for v in info.items()))
+        logging.debug("BaiduBaikeApi查询结果：")
+        logging.debug("\n" + "\n".join("%s:\t%s" % v for v in info.items()))        
 
         mi = Metadata(info["title"])
         plat = "网络平台"
         info.get("出版社", info.get("连载平台", plat))
         mi.authors = [info.get(u"作者", u"佚名")]
         mi.author_sort = mi.authors[0]
-        mi.isbn = info.get("ISBN", BAIKE_ISBN)
+        # if not mi.isbn or '00000000' in mi.isbn:
+        #   mi.isbn = info.get("ISBN", BAIKE_ISBN)
         mi.tags = baike.get_tags()
         pd = str2date(info.get(u"出版时间"))
         if pd is None:

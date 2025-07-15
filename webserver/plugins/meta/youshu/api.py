@@ -11,7 +11,7 @@ import requests
 from gettext import gettext as _
 from bs4 import BeautifulSoup
 
-YOUSHU_ISBN = "0000000000002"
+YOUSHU_ISBN = "0000000000001"
 KEY = "Youshu"
 
 CHROME_HEADERS = {
@@ -173,7 +173,8 @@ class YoushuApi:
         mi = Metadata(info["title"])
         mi.authors = [info.get("author", "佚名")]
         mi.author_sort = mi.authors[0]
-        mi.isbn = YOUSHU_ISBN
+        # if not mi.isbn or '00000000' in mi.isbn:
+        #   mi.isbn = YOUSHU_ISBN
         mi.tags = page.get_tags()
         mi.publisher = page.get_plat()
         mi.pubdate = utcnow()

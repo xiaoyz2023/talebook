@@ -51,7 +51,9 @@ class App:
         plat = plat.replace(u'首发', '')
         mi.publisher = info.get(u'连载平台', plat)
         mi.authors   = [info[u'作者']]
-        mi.isbn      = '0000000000001'
+        # mi.isbn      = '0000000000001'
+        # 保留原有ISBN，若不存在则使用百科数据中的ISBN，最后使用默认值
+        mi.isbn      = getattr(mi, 'isbn', None) or info.get('ISBN', '0000000000001')
         mi.tags      = baike.get_tags()
         mi.pubdate   = datetime.datetime.now()
         mi.timestamp = datetime.datetime.now()
@@ -63,6 +65,7 @@ class App:
         return mi
 
     def do_book_update(self, book_id):
+        logging.debug("do_book_update 开始更新书籍信息：")
         book_id = int(book_id)
         mi = self.db.get_metadata(book_id, index_is_id=True)
         #if not mi.comments or mi.comments == "None":
@@ -72,6 +75,9 @@ class App:
         mi.title = title.split("(")[0].split("（")[0].strip()
         #douban_mi = douban.select_douban_metadata(mi)
         douban_mi = douban.get_douban_metadata(mi)
+
+        logging.debug("douban.get_douban_metadata 豆瓣接口获取书籍信息结束。%r", douban_mi)
+
         if not douban_mi:
             try:
                 douban_mi = self.get_baike_metadata(mi.title)
@@ -85,6 +91,7 @@ class App:
 
         if mi.cover_data[0]: douban_mi.cover_data = None
         mi.smart_update(douban_mi, replace_metadata=True)
+        logging.debug("do_book_update 更新书籍信息。book_id=%s, mi=%r", book_id, mi)
         self.db.set_metadata(book_id, mi)
         self.log_succ(self.fmt % ("Update", book_id, self.total, douban_mi.isbn, mi.title))
 

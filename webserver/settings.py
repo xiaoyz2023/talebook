@@ -82,7 +82,7 @@ settings = {
     'smtp_encryption'   : "TLS",
     'smtp_username'     : "sender@talebook.org",
     'smtp_password'     : "password",
-    'douban_apikey'     : "0df993c66c0c636e29ecbb5344252a4a",
+    'douban_apikey'     : "0ac44ae016490db2204ce0a042db2916",
     'douban_baseurl'    : "https://api.douban.com",
     'douban_max_count'  : 2,
     'auto_fill_meta'    : False,

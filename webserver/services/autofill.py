@@ -77,13 +77,17 @@ class AutoFillService(AsyncService):
         # 保留书名不修改（万一出BUG，还能抢救一下）
         refer_mi.title = mi.title
 
+        logging.debug("更新后的元数据对象: %s", vars(refer_mi))
+        logging.debug("结构化数据:\n%s", 
+                     "\n".join([f"{k}: {v}" for k, v in vars(refer_mi).items()]))
+
         mi.smart_update(refer_mi, replace_metadata=True)
         self.db.set_metadata(book_id, mi)
-        logging.info(_("自动更新书籍 id=[%d] 的信息，title=%s"), book_id, mi.title)
+        logging.info(_("自动更新书籍 id=[%d] ，isbn=%s，title=%s的信息"), book_id, mi.isbn, mi.title)
         return True
 
     def should_update(self, mi):
-        if not mi.comments or not mi.has_cover:
+        if not mi.comments or '暂无简介' in mi.comments or not mi.isbn or '00000000' in mi.isbn:
             return True
         return False
 
@@ -99,6 +103,7 @@ class AutoFillService(AsyncService):
         return ts
 
     def plugin_search_best_book_info(self, mi):
+        #批量更新数据
         title = re.sub("[(（].*", "", mi.title)
         api = douban.DoubanBookApi(
             CONF["douban_apikey"],
@@ -110,11 +115,14 @@ class AutoFillService(AsyncService):
         book = None
         books = []
 
+        logging.debug("plugin_search_best_book_info 开始获取书籍数据===%s",mi.title)
+
         # 1. 查询 ISBN
         try:
             book = api.get_book_by_isbn(mi.isbn)
         except:
-            logging.error(_("douban 接口查询 %s 失败"), title)
+            logging.error(_("douban 接口查询isbn %s 失败"), mi.isbn)
+            book = None
 
         if book:
             return api.get_book_detail(book)
@@ -123,7 +131,7 @@ class AutoFillService(AsyncService):
         try:
             books = api.search_books(title)
         except:
-            logging.error(_("douban 接口查询 %s 失败"), title)
+            logging.error(_("douban 接口查询title %s 失败"), title)
 
         if books:
             # 优先选择匹配度更高的书
@@ -139,6 +147,6 @@ class AutoFillService(AsyncService):
             if book:
                 return book
         except:
-            logging.error(_("baidu 接口查询 %s 失败"), title)
+            logging.error(_("baidu 接口查询baidu %s 失败"), title)
 
         return None
