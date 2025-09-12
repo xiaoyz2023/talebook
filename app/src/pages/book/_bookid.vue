@@ -239,6 +239,10 @@
                                     <v-icon>money</v-icon>
                                     价格：{{ book.price }}
                                 </v-chip>
+                                <v-chip rounded small dark color="grey" v-if="book.storage">
+                                    <v-icon>storage</v-icon>
+                                    存储位置：{{ book.storage }}
+                                </v-chip>
                                 <template v-for="tag in book.tags">
                                     <v-chip
                                         rounded

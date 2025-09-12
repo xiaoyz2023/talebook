@@ -434,8 +434,19 @@ class BaseHandler(web.RequestHandler):
         # logging.debug("db操作 - get_books() - price_map:: ")
         # logging.debug(price_map)
 
+        # 获取存储位置的自定义字段
+        sql_storage = """SELECT id FROM custom_columns WHERE label = 'storage'"""
+        rows_storage = self.cache.backend.conn.get(sql_storage)
+        if rows_storage:
+            col_id_storage = rows_storage[0][0]
+            table_name_storage = f"custom_column_{col_id_storage}"
+            storage_map = {row[0]: row[1] for row in self.cache.backend.conn.get(
+                f"SELECT book, value FROM {table_name_storage}"
+            )}
+
         # logging.debug("db操作 - get_books() - self.db:: ")
-        # logging.debug(self.db)
+        # logging.debug(1333)
+        # logging.debug(storage_map)
 
         # 图书管理，详情页，已经是包含全部字段的
         logging.debug("db操作 - get_books() - books_list - *args, **kwargs, books:: ")
@@ -465,6 +476,10 @@ class BaseHandler(web.RequestHandler):
                 book["price"] = price_map.get(book["id"])
             else:
                 book["price"] = ""
+            if rows_storage:
+                book["storage"] = storage_map.get(book["id"])
+            else:
+                book["storage"] = ""
 
         logging.debug(
             "[%5d ms] select books from database (count = %d)" % (int(1000 * (time.time() - _ts)), len(books))

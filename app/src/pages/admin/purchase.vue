@@ -279,6 +279,7 @@ export default {
             { text: "简介", sortable: true, value: "comments" },
             { text: "价格", sortable: true, value: "price" },
             { text: "阅读状态", sortable: true, value: "readStatus" },
+            { text: "存放位置", sortable: false, value: "storage" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

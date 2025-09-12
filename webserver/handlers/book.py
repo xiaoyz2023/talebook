@@ -278,6 +278,7 @@ class BookEdit(BaseHandler):
             "language",
             "price",
             "readStatus",
+            "storage"
         ]
         for key, val in data.items():
             if key in KEYS:
@@ -286,6 +287,8 @@ class BookEdit(BaseHandler):
                   #purchase字段对应"购买状态"，需要映射转换
                 elif key == "readStatus":
                   mi.set("#readStatus", val) # #readStatus字段对应"阅读状态"，需要映射转换
+                elif key == "storage":
+                  mi.set("#storage", val) # #readStatus字段对应"阅读状态"，需要映射转换
                 else:
                   mi.set(key, val)
 
@@ -343,6 +346,8 @@ class BookAdd(BaseHandler):
             mi.set("#purchase", float(data["price"]))
         if "readStatus" in data:
             mi.set("#readStatus", data["readStatus"])
+        if "storage" in data:
+            mi.set("#storage", data["storage"])
         
         # 处理出版日期
         if data.get("pubdate"):
