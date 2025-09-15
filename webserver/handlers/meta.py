@@ -54,6 +54,7 @@ class MetaList(ListHandler):
             "rating": _(u"全部评分"),
             "publisher": _(u"全部出版社"),
             "purchaseList": _(u"全部已购"),
+            "wish": _(u"心愿清单"),
         }
         title = titles.get(meta, _(u"未知")) % vars()
         # category = meta if meta in ["series", "publisher"] else meta + "s"

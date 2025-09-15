@@ -465,6 +465,7 @@ class TestBook(TestWithUserLogin):
             "author_sort": "海明威",
             "publisher": "上海译文出版社",
             "purchase": "0",
+            "wish": "否",
             "comments": "本书讲述了一个渔夫的故事。古巴老渔夫圣地亚哥在连续八十四天没捕到鱼的情况下。",
             "series": "x",
             "language": None,

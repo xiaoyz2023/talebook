@@ -289,6 +289,8 @@ class BookEdit(BaseHandler):
                   mi.set("#readStatus", val) # #readStatus字段对应"阅读状态"，需要映射转换
                 elif key == "storage":
                   mi.set("#storage", val) # #readStatus字段对应"阅读状态"，需要映射转换
+                elif key == "wish":
+                  mi.set("#wish", val) # #readStatus字段对应"阅读状态"，需要映射转换
                 else:
                   mi.set(key, val)
 
@@ -348,6 +350,8 @@ class BookAdd(BaseHandler):
             mi.set("#readStatus", data["readStatus"])
         if "storage" in data:
             mi.set("#storage", data["storage"])
+        if "wish" in data:
+            mi.set("#storage", data["wish"])
         
         # 处理出版日期
         if data.get("pubdate"):
@@ -481,6 +485,12 @@ class purchaseList(ListHandler):
     def get(self):
         title = _(u"已购书籍")
         ids = self.books_purchase_list()
+        return self.render_book_list([], ids=ids, title=title, sort_by_id=True)
+
+class wishList(ListHandler):
+    def get(self):
+        title = _(u"已购书籍")
+        ids = self.books_wish_list()
         return self.render_book_list([], ids=ids, title=title, sort_by_id=True)
 
 class SearchBook(ListHandler):
@@ -769,4 +779,5 @@ def routes():
         (r"/api/read/txt", TxtRead),
         (r"/api/book/txt/init", BookTxtInit),
         (r"/api/purchaseList", purchaseList),
+        (r"/api/wishList", wishList),
     ]

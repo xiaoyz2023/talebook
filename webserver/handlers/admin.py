@@ -507,6 +507,37 @@ class AdminPurchaseList(BaseHandler):
             books = [SimpleBookFormatter(b, self.cdn_url).format() for b in self.get_purchase_list(ids=page_ids)]
         return {"err": "ok", "items": books, "total": total}
 
+class AdminWishList(BaseHandler):
+    @js
+    @is_admin
+    def get(self):
+        if not self.admin_user:
+            return {"err": "permission.not_admin", "msg": _(u"当前用户非管理员")}
+
+        num = max(10, int(self.get_argument("num", 20)))
+        page = max(0, int(self.get_argument("page", 1)) - 1)
+        sort = self.get_argument("sort", "id")
+        desc = self.get_argument("desc", "desc") == "true"
+        search = self.get_argument("search", "")
+
+        logging.debug("num=%d, page=%d, sort=%s, desc=%s" % (num, page, sort, desc))
+
+        self.db.sort(field=sort, ascending=(not desc))
+        start = page * num
+        end = start + num
+        all_ids = list(self.cache.search(search))
+        total = len(all_ids)
+        
+        # sort by id
+        if sort == "id":
+            all_ids.sort(reverse=desc)
+
+        books = []
+        page_ids = all_ids[start:end]
+        if page_ids:
+            books = [SimpleBookFormatter(b, self.cdn_url).format() for b in self.get_wish_list(ids=page_ids)]
+        return {"err": "ok", "items": books, "total": total}
+
 class AdminBookFill(BaseHandler):
     @js
     @is_admin
@@ -573,6 +604,39 @@ class AdminPurchaseFill(BaseHandler):
         AutoFillService().auto_fill_all(idlist)
         return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
+class AdminWishFill(BaseHandler):
+    @js
+    @is_admin
+    def get(self):
+        s = AutoFillService()
+        status = {
+            "total": s.count_total,
+            "skip": s.count_skip,
+            "done": s.count_done,
+            "fail": s.count_fail,
+        }
+        return {"err": "ok", "msg": "ok", "status": status}
+
+    @js
+    @is_admin
+    def post(self):
+        req = tornado.escape.json_decode(self.request.body)
+        idlist = req["idlist"]
+        if not idlist:
+            return {"err": "params.error", "msg": _(u"参数错误")}
+
+        if idlist == "all":
+            idlist = list(self.cache.search(""))
+        elif isinstance(idlist, list):
+            for bid in idlist:
+                if not isinstance(bid, int):
+                    return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
+        else:
+            return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
+
+        AutoFillService().auto_fill_all(idlist)
+        return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
+
 def routes():
     return [
         (r"/api/admin/ssl", AdminSSL),
@@ -584,4 +648,6 @@ def routes():
         (r"/api/admin/book/fill", AdminBookFill),
         (r"/api/admin/purchase/list", AdminPurchaseList),
         (r"/api/admin/purchase/fill", AdminPurchaseFill),
+        (r"/api/admin/wish/list", AdminWishList),
+        (r"/api/admin/wish/fill", AdminWishFill),
     ]

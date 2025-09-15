@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        <v-card-title> 已购图书管理 <v-chip small class="primary">Beta</v-chip> </v-card-title>
+        <v-card-title> 心愿清单管理 <v-chip small class="primary">Beta</v-chip> </v-card-title>
         <v-card-text> 此表格仅展示图书的部分字段，点击即可快捷修改。完整图书信息请点击链接查看书籍详情页面</v-card-text>
         <v-card-text> <a target="_blank" :href="`/admin/add`">添加书籍</a></v-card-text>
         <v-card-actions>
@@ -211,6 +211,22 @@
                 </v-edit-dialog> 
             </template>
 
+            <template v-slot:item.wish="{ item }">
+                 <v-edit-dialog
+                    large
+                    :return-value.sync="item.wish"
+                    @save="save(item, 'wish')"
+                    save-text="保存"
+                    cancel-text="取消"
+                >
+                    {{ item.wish }}
+                    <template v-slot:input>
+                        <div class="mt-4 text-h6">修改字段</div>
+                        <v-text-field v-model="item.wish" label="wish" counter></v-text-field>
+                    </template>
+                </v-edit-dialog> 
+            </template>
+
             <template v-slot:item.actions="{ item }">
                 <v-menu offset-y right>
                     <template v-slot:activator="{ on }">
@@ -295,6 +311,7 @@ export default {
             { text: "简介", sortable: true, value: "comments" },
             { text: "价格", sortable: true, value: "price" },
             { text: "阅读状态", sortable: true, value: "readStatus" },
+            { text: "心愿", sortable: true, value: "wish" },
             { text: "存放位置", sortable: false, value: "storage" },
             { text: "操作", sortable: false, value: "actions" },
         ],
@@ -341,7 +358,7 @@ export default {
             if (this.search != undefined) {
                 data.append("search", this.search);
             }
-            this.$backend("/admin/purchase/list?" + data.toString())
+            this.$backend("/admin/wish/list?" + data.toString())
                 .then((rsp) => {
                     if (rsp.err != "ok") {
                         this.items = [];
@@ -357,7 +374,7 @@ export default {
                 });
         },
         refresh_progress() {
-            this.$backend("/admin/purchase/fill", {
+            this.$backend("/admin/wish/fill", {
                 method: "GET",
             })
             .then((rsp) => {
@@ -369,7 +386,7 @@ export default {
             this.refresh_progress();
         },
         auto_fill() {
-            this.$backend("/admin/purchase/fill", {
+            this.$backend("/admin/wish/fill", {
                 method: "POST",
                 body: JSON.stringify({"idlist": "all"}),
             })

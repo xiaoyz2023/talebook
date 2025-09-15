@@ -77,6 +77,7 @@ export default {
             { icon: 'mdi-history',        href:'/recent',    text: '所有书籍', },
             { icon: 'mdi-trending-up',    href:'/hot',       text: '热度榜单', },
             { icon: "mdi-tag-heart",      href: "/purchaseList", text: "已购书籍"},
+            { icon: "mdi-tag-heart",      href: "/wishList", text: "愿望清单"},
             ]
     },
     async asyncData({ app, res }) {

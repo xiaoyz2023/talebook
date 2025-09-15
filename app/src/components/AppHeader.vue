@@ -240,6 +240,7 @@ export default {
                         { icon: "mdi-human-greeting", href: "/admin/users", text: "用户管理" },
                         { icon: "mdi-library-shelves", href: "/admin/books", text: "图书管理" },
                         { icon: "mdi-library-shelves", href: "/admin/purchase", text: "已购图书管理" },
+                        { icon: "mdi-library-shelves", href: "/admin/wish", text: "愿望清单管理" },
                         { icon: "mdi-import", href: "/admin/imports", text: "导入图书" },
                     ],
                 },
@@ -251,6 +252,7 @@ export default {
                 { icon: "mdi-human-greeting", href: "/author", text: "作者", count: this.sys.authors },
                 { icon: "mdi-tag-heart", href: "/tag", text: "标签", count: this.sys.tags },
                 { icon: "mdi-tag-heart", href: "/purchaseList", text: "已购书籍"},
+                { icon: "mdi-tag-heart", href: "/wishList", text: "愿望清单"},
                 {
                     target: "",
                     links: [

@@ -444,6 +444,16 @@ class BaseHandler(web.RequestHandler):
                 f"SELECT book, value FROM {table_name_storage}"
             )}
 
+        # 获取心愿清单的自定义字段
+        sql_wish = """SELECT id FROM custom_columns WHERE label = 'wish'"""
+        rows_wish = self.cache.backend.conn.get(sql_wish)
+        if rows_wish:
+            col_id_wish = rows_wish[0][0]
+            table_name_wish = f"custom_column_{col_id_wish}"
+            wish_map = {row[0]: row[1] for row in self.cache.backend.conn.get(
+                f"SELECT book, value FROM {table_name_wish}"
+            )}
+
         # logging.debug("db操作 - get_books() - self.db:: ")
         # logging.debug(1333)
         # logging.debug(storage_map)
@@ -480,6 +490,10 @@ class BaseHandler(web.RequestHandler):
                 book["storage"] = storage_map.get(book["id"])
             else:
                 book["storage"] = ""
+            if rows_wish:
+                book["wish"] = wish_map.get(book["id"])
+            else:
+                book["wish"] = "否"
 
         logging.debug(
             "[%5d ms] select books from database (count = %d)" % (int(1000 * (time.time() - _ts)), len(books))
@@ -538,6 +552,78 @@ class BaseHandler(web.RequestHandler):
                     "purchase_date": book[3],
                     "isbn": book[4],
                     "readStatus": book[5],
+                    "rating": "",
+                    "timestamp": "",
+                    "pubdate": "",
+                    "author": "",
+                    "authors": "",
+                    "author_sort": "",
+                    "tag": "",
+                    "tags": "",
+                    "publisher": "",
+                    "comments": "",
+                    "series": "",
+                    "language": "",
+                    "img": "",
+                    "thumb": "",
+                    "collector": "",
+                    "count_visit": "",
+                    "count_download": "",
+                }
+                books.append(item)
+
+            logging.debug(books)
+
+        return books
+
+    def get_wish_list(self, *args, **kwargs):
+
+        sql_wish = """SELECT id FROM custom_columns WHERE label = 'wish'"""
+        rows_wish = self.cache.backend.conn.get(sql_wish)
+
+        logging.debug("db操作 - get_wish_list() - sql_wish:: ")
+        logging.debug(sql_wish)
+        logging.debug(rows_wish)
+
+        sql_readStatus = """SELECT id FROM custom_columns WHERE label = 'readStatus'"""
+        rows_readStatus = self.cache.backend.conn.get(sql_readStatus)
+        
+        books = []
+        if rows_wish:
+            col_id_wish = rows_wish[0][0]
+            table_name_wish = f"custom_column_{col_id_wish}"
+
+            col_id_readStatus = rows_readStatus[0][0]
+            table_name_readStatus = f"custom_column_{col_id_readStatus}"
+
+            tuple_list = []
+
+            sql = f"""
+            SELECT A.book, B.title, A.value, B.isbn, C.value AS read_status 
+            FROM {table_name_wish} as A 
+            LEFT JOIN books as B ON B.id = A.book 
+            LEFT JOIN {table_name_readStatus} AS C ON C.book = A.book
+            WHERE CAST(A.value AS REAL) > 0 
+            group by A.book
+            """
+
+            logging.debug("db操作 - get_wish_list() - sql: ")
+            logging.debug(sql)
+            tuple_list = self.cache.backend.conn.get(sql)
+            # [(50, 10.8, '书名', ''), (51, 5.0, '书名', '')]
+            logging.debug(tuple_list)
+            # logging.debug(1313)
+            # booksss = self.db.get_data_as_dict(*args, **kwargs)
+            # logging.debug(booksss)
+            # 获取列名,将结果转为字典列表
+            
+            for book in tuple_list:
+                item = {
+                    "id": book[0], 
+                    "title": book[1], 
+                    "wish": book[2],
+                    "isbn": book[3],
+                    "readStatus": book[4],
                     "rating": "",
                     "timestamp": "",
                     "pubdate": "",
@@ -638,6 +724,25 @@ class BaseHandler(web.RequestHandler):
             sql2 = f"""SELECT id FROM {table_name} WHERE CAST(value AS REAL) > 0"""
 
             logging.debug("db操作 - books_purchase_list() - sql2: ")
+            logging.debug(sql2)
+            ids = [v[0] for v in self.cache.backend.conn.get(sql2)]
+            return ids
+
+    def books_wish_list(self):
+        sql = """SELECT id FROM custom_columns WHERE label = 'wish'"""
+        rows = self.cache.backend.conn.get(sql)
+
+        logging.debug("db操作 - books_wish_list() - sql:: ")
+        logging.debug(sql)
+        logging.debug(rows)
+
+        if rows:
+            col_id = rows[0][0]
+            table_name = f"custom_column_{col_id}"
+
+            sql2 = f"""SELECT id FROM {table_name} WHERE CAST(value AS REAL) > 0"""
+
+            logging.debug("db操作 - books_wish_list() - sql2: ")
             logging.debug(sql2)
             ids = [v[0] for v in self.cache.backend.conn.get(sql2)]
             return ids
