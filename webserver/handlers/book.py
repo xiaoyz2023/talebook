@@ -351,13 +351,25 @@ class BookAdd(BaseHandler):
         
         # 处理自定义字段
         if "price" in data:
-            mi.set("#purchase", float(data["price"]))
+            try:
+                price_val = float(data["price"])
+                if price_val < 0:
+                    return {"err": "params.invalid", "msg": _("价格不能为负数")}
+            except (ValueError, TypeError):
+                return {"err": "params.invalid", "msg": _("价格必须是数字")}
+            mi.set("#purchase", price_val)
         if "readStatus" in data:
             mi.set("#readStatus", data["readStatus"])
         if "storage" in data:
             mi.set("#storage", data["storage"])
         if "wish" in data:
-            mi.set("#storage", data["wish"])
+            val = data["wish"]
+            val2 = ""
+            if val == "yes" or val == "是" or val == "1" or val == "true":
+                val2 = "1"
+            else:
+                val2 = "0"
+            mi.set("#wish", val2)
         
         # 处理出版日期
         if data.get("pubdate"):
