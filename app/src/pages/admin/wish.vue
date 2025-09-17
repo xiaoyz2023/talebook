@@ -312,7 +312,6 @@ export default {
             { text: "价格", sortable: true, value: "price" },
             { text: "阅读状态", sortable: true, value: "readStatus" },
             { text: "心愿", sortable: true, value: "wish" },
-            { text: "存放位置", sortable: false, value: "storage" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

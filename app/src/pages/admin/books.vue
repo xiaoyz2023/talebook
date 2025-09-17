@@ -226,6 +226,22 @@
                 </v-edit-dialog> 
             </template>
 
+            <template v-slot:item.wish="{ item }">
+                 <v-edit-dialog
+                    large
+                    :return-value.sync="item.wish"
+                    @save="save(item, 'wish')"
+                    save-text="保存"
+                    cancel-text="取消"
+                >
+                    {{ item.wish }}
+                    <template v-slot:input>
+                        <div class="mt-4 text-h6">修改字段</div>
+                        <v-text-field v-model="item.wish" label="wish" counter></v-text-field>
+                    </template>
+                </v-edit-dialog> 
+            </template>
+
             <template v-slot:item.actions="{ item }">
                 <v-menu offset-y right>
                     <template v-slot:activator="{ on }">
@@ -311,7 +327,8 @@ export default {
             { text: "简介", sortable: true, value: "comments" },
             { text: "价格", sortable: true, value: "price" },
             { text: "阅读状态", sortable: true, value: "readStatus" },
-            { text: "存放位置", sortable: false, value: "storage" },
+            { text: "存储位置", sortable: false, value: "storage" },
+            { text: "心愿", sortable: true, value: "wish" },
             { text: "操作", sortable: false, value: "actions" },
         ],
         progress: {

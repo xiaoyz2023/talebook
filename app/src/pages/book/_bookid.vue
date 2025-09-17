@@ -240,8 +240,12 @@
                                     价格：{{ book.price }}
                                 </v-chip>
                                 <v-chip rounded small dark color="grey" v-if="book.storage">
-                                    <v-icon>storage</v-icon>
+                                    <v-icon>explore</v-icon>
                                     存储位置：{{ book.storage }}
+                                </v-chip>
+                                <v-chip rounded small dark color="grey" v-if="book.wish">
+                                    <v-icon>explore</v-icon>
+                                    心愿：{{ book.wish }}
                                 </v-chip>
                                 <template v-for="tag in book.tags">
                                     <v-chip

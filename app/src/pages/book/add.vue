@@ -68,7 +68,10 @@
                                     <v-text-field label="阅读状态" v-model="book.readStatus">{{ book.readStatus }}</v-text-field>
                                 </v-col>
                                 <v-col class='py-0' cols=12 sm=6>
-                                    <v-text-field label="阅读状态" v-model="book.storage">{{ book.storage }}</v-text-field>
+                                    <v-text-field label="存储位置" v-model="book.storage">{{ book.storage }}</v-text-field>
+                                </v-col>
+                                <v-col class='py-0' cols=12 sm=6>
+                                    <v-text-field label="心愿" v-model="book.wish">{{ book.wish }}</v-text-field>
                                 </v-col>
 
                                 <v-col class='py-0' cols=12>
@@ -173,6 +176,7 @@ export default {
                 price: '', //购买价格
                 readStatus: '', //阅读状态
                 storage: '', //存储位置
+                wish: '', //愿望
                 tags: [], //标签列表
                 comments: '', //内容简介
                 files: [], //文件列表

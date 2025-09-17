@@ -70,6 +70,9 @@
                                 <v-col class='py-0' cols=12 sm=6>
                                     <v-text-field label="存储位置" v-model="book.storage">{{ book.storage }}</v-text-field>
                                 </v-col>
+                                <v-col class='py-0' cols=12 sm=6>
+                                    <v-text-field label="心愿" v-model="book.wish">{{ book.wish }}</v-text-field>
+                                </v-col>
 
                                 <v-col class='py-0' cols=12>
                                     <!-- TAGS -->

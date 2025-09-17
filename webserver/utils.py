@@ -44,6 +44,16 @@ class SimpleBookFormatter:
         readStatus = "未读"
         if b.get("readStatus") is not None:
             readStatus = b["readStatus"]
+
+        # 存储位置
+        storage = ""
+        if b.get("storage") is not None:
+            storage = b["storage"]
+
+        # 心愿
+        wish = ""
+        if b.get("wish") is not None:
+            wish = b["wish"]
             
         return {
             "id": b["id"],
@@ -69,6 +79,8 @@ class SimpleBookFormatter:
             "count_download": self.val("count_download", 0),
             "price": price,
             "readStatus": readStatus,
+            "storage": storage,
+            "wish": wish,
         }
 
 
