@@ -491,7 +491,7 @@ class BaseHandler(web.RequestHandler):
             else:
                 book["storage"] = ""
             if rows_wish:
-                if wish_map.get(book["id"]) == "1":
+                if wish_map.get(book["id"]) == 1:
                     book["wish"] = "是"
                 else:
                     book["wish"] = "否"
@@ -645,7 +645,7 @@ class BaseHandler(web.RequestHandler):
                     "count_visit": "",
                     "count_download": "",
                 }
-                if book[2] == "1":
+                if book[2] == 1:
                     item["wish"] = "是"
                 else:
                     item["wish"] = "否"

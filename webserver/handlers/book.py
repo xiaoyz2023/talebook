@@ -292,7 +292,7 @@ class BookEdit(BaseHandler):
                   mi.set("#storage", val) # #readStatus字段对应"阅读状态"，需要映射转换
                 elif key == "wish":
                     val2 = ""
-                    if val == "yes" or val == "是" or val == "1" or val == "true":
+                    if val == "yes" or val == "是" or val == 1 or val == "1" or val == "true":
                       val2 = "1"
                     else:
                       val2 = "0"
@@ -365,7 +365,7 @@ class BookAdd(BaseHandler):
         if "wish" in data:
             val = data["wish"]
             val2 = ""
-            if val == "yes" or val == "是" or val == "1" or val == "true":
+            if val == "yes" or val == "是" or val == 1 or val == "1" or val == "true":
                 val2 = "1"
             else:
                 val2 = "0"
