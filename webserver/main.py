@@ -156,7 +156,28 @@ def make_app():
     from calibre.db.legacy import LibraryDatabase
     from calibre.utils.date import fromtimestamp
 
-    book_db = LibraryDatabase(os.path.expanduser(options.with_library))
+    # - 创建了 CustomLibraryDatabase 子类继承自 LibraryDatabase
+    # - 可以在子类中添加任意自定义方法
+    # - 保持了原有 LibraryDatabase 的所有功能
+    class CustomLibraryDatabase(LibraryDatabase):
+        def __init__(self, library_path):
+            super().__init__(library_path)
+            self._purchase_api = None
+            # 提前导入避免每次调用都导入
+            from webserver.library.database import PurchaseCache
+            self._PurchaseCache = PurchaseCache
+            
+        @property
+        def purchase_api(self):
+            # """获取采购API实例"""
+            if self._purchase_api is None:
+                self._purchase_api = self._PurchaseCache(self)
+            return self._purchase_api
+
+    # book_db = LibraryDatabase(os.path.expanduser(options.with_library))
+    # 使用自定义的CustomLibraryDatabase初始化书籍数据库
+    # 替代原来的LibraryDatabase，以支持purchase_api功能
+    book_db = CustomLibraryDatabase(os.path.expanduser(options.with_library))
     cache = book_db.new_api
 
     # hook 1: 按字母作为第一级目录，解决书库子目录太多的问题
