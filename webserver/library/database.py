@@ -7,6 +7,8 @@ class PurchaseCache:
         self._index = []
         self._books_cache = []
         self.last_refresh = 0
+        self.total = 0
+        self.ids_cache = []
         
     def _refresh(self):
         """刷新采购书籍缓存"""
@@ -19,6 +21,7 @@ class PurchaseCache:
             rows_readStatus = self.db.backend.conn.get(sql_readStatus)
 
             books = []
+            ids = []
             if rows_purchase:
                 col_id_purchase = rows_purchase[0][0]
                 table_name_purchase = f"custom_column_{col_id_purchase}"
@@ -69,9 +72,12 @@ class PurchaseCache:
                         "count_download": "",
                     }
                     books.append(item)
+                    ids.append(item['id'])
                 
                 # 存储到缓存
                 self._books_cache = books
+                self.ids_cache = ids
+                self.total = len(books)
                 self.last_refresh = time.time()
     
     def get_ids(self):
@@ -82,7 +88,7 @@ class PurchaseCache:
     def search(self, query=None):
         """搜索采购书籍"""
         self._refresh()
-        return self._index  # 实际项目中可添加更复杂的搜索逻辑
+        return self.ids_cache
 
     def get_books(self, *args, **kwargs):
         """获取缓存的采购书籍数据"""
@@ -100,6 +106,8 @@ class WishCache:
         self._index = []
         self._books_cache = []
         self.last_refresh = 0
+        self.total = 0
+        self.ids_cache = []
         
     def _refresh(self):
         """刷新心愿书籍缓存"""
@@ -114,6 +122,7 @@ class WishCache:
             rows_readStatus = self.db.backend.conn.get(sql_readStatus)
 
             books = []
+            ids = []
             if rows_wish:
                 col_id_wish = rows_wish[0][0]
                 table_name_wish = f"custom_column_{col_id_wish}"
@@ -167,23 +176,26 @@ class WishCache:
                     else:
                         item["wish"] = "否"
                     books.append(item)
+                    ids.append(item['id'])
                 
                 # 存储到缓存
                 self._books_cache = books
+                self.ids_cache = ids
+                self.total = len(books)
                 self.last_refresh = time.time()
     
     def get_ids(self):
-        """获取所有采购书籍ID"""
+        """获取所有心愿书籍ID"""
         self._refresh()
         return self._index
         
     def search(self, query=None):
-        """搜索采购书籍"""
+        """搜索心愿书籍"""
         self._refresh()
-        return self._index  # 实际项目中可添加更复杂的搜索逻辑
+        return self.ids_cache
 
     def get_books(self, *args, **kwargs):
-        """获取缓存的采购书籍数据"""
+        """获取缓存的心愿书籍数据"""
         self._refresh()
         if 'ids' in kwargs and kwargs['ids']:
             # 只返回kwargs中指定ID的书籍

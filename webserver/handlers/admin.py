@@ -494,7 +494,7 @@ class AdminPurchaseList(BaseHandler):
         self.db.sort(field=sort, ascending=(not desc))
         start = page * num
         end = start + num
-        all_ids = list(self.cache.search(search))
+        all_ids = list(self.db.purchase_api.search(search))
         total = len(all_ids)
         
         # sort by id
@@ -525,7 +525,7 @@ class AdminWishList(BaseHandler):
         self.db.sort(field=sort, ascending=(not desc))
         start = page * num
         end = start + num
-        all_ids = list(self.cache.search(search))
+        all_ids = list(self.db.wish_api.search(search))
         total = len(all_ids)
         
         # sort by id
