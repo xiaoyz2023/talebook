@@ -496,6 +496,7 @@ class AdminPurchaseList(BaseHandler):
         end = start + num
         all_ids = list(self.db.purchase_api.search(search))
         total = len(all_ids)
+        amount = self.db.purchase_api.get_amount()
         
         # sort by id
         if sort == "id":
@@ -505,7 +506,7 @@ class AdminPurchaseList(BaseHandler):
         page_ids = all_ids[start:end]
         if page_ids:
             books = [SimpleBookFormatter(b, self.cdn_url).format() for b in self.get_purchase_list(ids=page_ids)]
-        return {"err": "ok", "items": books, "total": total}
+        return {"err": "ok", "items": books, "total": total, "amount": amount}
 
 class AdminWishList(BaseHandler):
     @js

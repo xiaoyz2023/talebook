@@ -2,7 +2,7 @@
     <v-card>
         <v-card-title> 心愿清单管理 <v-chip small class="primary">Beta</v-chip> </v-card-title>
         <v-card-text> 此表格仅展示图书的部分字段，点击即可快捷修改。完整图书信息请点击链接查看书籍详情页面</v-card-text>
-        <v-card-text> 加入愿望的图书记录：{{this.total}} 条，总金额：</v-card-text>
+        <v-card-text> 加入愿望的图书记录：{{this.total}} 条</v-card-text>
         <v-card-text> <a target="_blank" :href="`/book/add`">添加书籍</a></v-card-text>
         <v-card-actions>
             <v-btn :disabled="loading" outlined color="primary" @click="getDataFromApi"><v-icon>mdi-reload</v-icon>刷新</v-btn>

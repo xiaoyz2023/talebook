@@ -9,6 +9,7 @@ class PurchaseCache:
         self.last_refresh = 0
         self.total = 0
         self.ids_cache = []
+        self.amount = 0
         
     def _refresh(self):
         """刷新采购书籍缓存"""
@@ -22,6 +23,7 @@ class PurchaseCache:
 
             books = []
             ids = []
+            amount = 0
             if rows_purchase:
                 col_id_purchase = rows_purchase[0][0]
                 table_name_purchase = f"custom_column_{col_id_purchase}"
@@ -73,17 +75,25 @@ class PurchaseCache:
                     }
                     books.append(item)
                     ids.append(item['id'])
+                    if item['price'] and float(item['price']) > 0:
+                        amount += round(float(item['price']), 2)
                 
                 # 存储到缓存
                 self._books_cache = books
                 self.ids_cache = ids
                 self.total = len(books)
+                self.amount = round(amount, 2)
                 self.last_refresh = time.time()
     
     def get_ids(self):
         """获取所有采购书籍ID"""
         self._refresh()
         return self._index
+
+    def get_amount(self, query=None):
+        """采购书籍总价"""
+        self._refresh()
+        return self.amount
         
     def search(self, query=None):
         """搜索采购书籍"""
