@@ -163,9 +163,13 @@ def make_app():
         def __init__(self, library_path):
             super().__init__(library_path)
             self._purchase_api = None
+            self._wish_api = None
             # 提前导入避免每次调用都导入
             from webserver.library.database import PurchaseCache
             self._PurchaseCache = PurchaseCache
+
+            from webserver.library.database import WishCache
+            self._WishCache = WishCache
             
         @property
         def purchase_api(self):
@@ -173,6 +177,12 @@ def make_app():
             if self._purchase_api is None:
                 self._purchase_api = self._PurchaseCache(self)
             return self._purchase_api
+        @property
+        def wish_api(self):
+            # """获取愿望API实例"""
+            if self._wish_api is None:
+                self._wish_api = self._WishCache(self)
+            return self._wish_api
 
     # book_db = LibraryDatabase(os.path.expanduser(options.with_library))
     # 使用自定义的CustomLibraryDatabase初始化书籍数据库
