@@ -94,6 +94,11 @@ class PurchaseCache:
         """采购书籍总价"""
         self._refresh()
         return self.amount
+
+    def clear_cache(self, query=None):
+        """清空采购书籍缓存"""
+        self.last_refresh = 0
+        self.total = 0
         
     def search(self, query=None):
         """搜索采购书籍"""
@@ -203,6 +208,11 @@ class WishCache:
         """搜索心愿书籍"""
         self._refresh()
         return self.ids_cache
+
+    def clear_cache(self, query=None):
+        """清空心愿书籍缓存"""
+        self.last_refresh = 0
+        self.total = 0
 
     def get_books(self, *args, **kwargs):
         """获取缓存的心愿书籍数据"""
