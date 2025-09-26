@@ -317,6 +317,9 @@ class BookEdit(BaseHandler):
         logging.debug("更新成功")
 
         self.db.set_metadata(bid, mi)
+
+        self.refresh_all_caches()  # 刷新所有相关缓存
+
         return {"err": "ok", "msg": _(u"更新成功")}
 
 class BookAdd(BaseHandler):
@@ -388,6 +391,9 @@ class BookAdd(BaseHandler):
         item.book_id = book_id
         item.collector_id = self.user_id()
         item.save()
+
+        # 刷新所有相关缓存
+        self.refresh_all_caches()
 
         return {"err": "ok", "msg": _(u"添加成功")}
 
@@ -612,6 +618,7 @@ class BookUpload(BaseHandler):
             item.book_id = book_id
             item.collector_id = self.user_id()
             item.save()
+        self.refresh_all_caches()  # 刷新所有相关缓存
         self.add_msg("success", _(u"导入书籍成功！"))
         AutoFillService().auto_fill(book_id)
         return {"err": "ok", "book_id": book_id}

@@ -126,6 +126,7 @@ class WishCache:
         
     def _refresh(self):
         """刷新心愿书籍缓存"""
+        logging.debug("self.last_refresh :: " + str(self.last_refresh))
         if time.time() - self.last_refresh > 3600:
             sql_wish = """SELECT id FROM custom_columns WHERE label = 'wish'"""
             # 修改这里 - 使用self.db而不是self.cache
@@ -211,6 +212,7 @@ class WishCache:
 
     def clear_cache(self, query=None):
         """清空心愿书籍缓存"""
+        logging.debug("wishCache clear_cache")
         self.last_refresh = 0
         self.total = 0
 

@@ -476,6 +476,13 @@ class AdminBookList(BaseHandler):
 
         return {"err": "ok", "items": books, "total": total}
 
+    def refresh_all_caches(self):
+        # """刷新所有相关缓存"""
+        logging.debug("admin.py refresh_all_caches")
+        self.cache.refresh()  # 刷新书籍缓存
+        self.db.purchase_api.clear_cache()  # 刷新采购书籍缓存
+        self.db.wish_api.clear_cache()  # 刷新心愿清单缓存
+
 class AdminPurchaseList(BaseHandler):
     @js
     @is_admin
@@ -570,6 +577,7 @@ class AdminBookFill(BaseHandler):
             return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
 
         AutoFillService().auto_fill_all(idlist)
+        self.refresh_all_caches()  # 刷新所有相关缓存
         return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
 class AdminPurchaseFill(BaseHandler):
@@ -603,6 +611,7 @@ class AdminPurchaseFill(BaseHandler):
             return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
 
         AutoFillService().auto_fill_all(idlist)
+        self.refresh_all_caches()  # 刷新所有相关缓存
         return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
 class AdminWishFill(BaseHandler):
@@ -636,6 +645,7 @@ class AdminWishFill(BaseHandler):
             return {"err": "params.error.idlist", "msg": _(u"idlist参数错误")}
 
         AutoFillService().auto_fill_all(idlist)
+        self.refresh_all_caches()  # 刷新所有相关缓存
         return {"err": "ok", "msg": _(u"任务启动成功！请耐心等待，稍后再来刷新页面")}
 
 def routes():
@@ -646,7 +656,7 @@ def routes():
         (r"/api/admin/settings", AdminSettings),
         (r"/api/admin/testmail", AdminTestMail),
         (r"/api/admin/book/list", AdminBookList),
-        (r"/api/admin/book/fill", AdminBookFill),
+        (r"/api/admin/book/fill", AdminBookFill), #批量处理
         (r"/api/admin/purchase/list", AdminPurchaseList),
         (r"/api/admin/purchase/fill", AdminPurchaseFill),
         (r"/api/admin/wish/list", AdminWishList),

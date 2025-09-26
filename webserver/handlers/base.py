@@ -611,6 +611,12 @@ class BaseHandler(web.RequestHandler):
             ids = [v[0] for v in self.cache.backend.conn.get(sql2)]
             return ids
 
+    def refresh_all_caches(self):
+        # """刷新所有相关缓存"""
+        logging.debug("base.py refresh_all_caches")
+        self.db.purchase_api.clear_cache()  # 刷新采购书籍缓存
+        self.db.wish_api.clear_cache()  # 刷新心愿清单缓存
+
     def get_argument_start(self):
         start = self.get_argument("start", 0)
         try:
