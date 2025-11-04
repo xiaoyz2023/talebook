@@ -15,7 +15,7 @@ services:
       - D:/testProgram/talebook_volume/app:/var/www/talebook/app
     ports:
       - "8066:80"
-      - "8443:443"
+      - "8505:446"
     environment:
       - PUID=1000
       - PGID=1000

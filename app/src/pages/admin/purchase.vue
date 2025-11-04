@@ -8,7 +8,7 @@
             <v-btn :disabled="loading" outlined color="primary" @click="getDataFromApi"><v-icon>mdi-reload</v-icon>刷新</v-btn>
             <v-btn :disabled="loading" outlined color="info" @click="show_dialog_auto_file"><v-icon>mdi-info</v-icon>自动更新图书信息... </v-btn>
             <v-spacer></v-spacer>
-            <v-text-field cols="2" dense v-model="search" append-icon="mdi-magnify" label="搜索" single-line hide-details></v-text-field>
+            <v-text-field cols="2" dense v-model="search" append-icon="mdi-magnify" label="搜索" single-line hide-details @click="search_books"></v-text-field>
         </v-card-actions>
         <v-data-table
             dense
@@ -386,6 +386,11 @@ export default {
         show_dialog_auto_file() {
             this.meta_dialog = true;
             this.refresh_progress();
+        },
+        search_books(){
+            if (this.search.trim() != "") {
+                this.$router.push("/search?name=" + this.search.trim());
+            }
         },
         auto_fill() {
             this.$backend("/admin/purchase/fill", {
